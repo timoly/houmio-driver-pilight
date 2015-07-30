@@ -13,8 +13,8 @@ winston.add(winston.transports.Console, {
 
 console.log = winston.info
 
-var houmioBridge = process.env.HOUMIO_BRIDGE || "localhost:3001"
-var pilightBridge = process.env.pilight_BRIDGE || '192.168.2.105'
+var houmioBridge = process.env.HOUMIO_BRIDGE || "192.168.2.110:3001"
+var pilightBridge = process.env.pilight_BRIDGE || '192.168.2.105:5001'
 console.log("houmioBridge:", houmioBridge, "pilightBridge:", pilightBridge)
 
 var state = function(device, state){
@@ -26,7 +26,11 @@ var state = function(device, state){
     }
   }
 
-  request.get('http://' + pilightBridge + '/send?' + encodeURIComponent(JSON.stringify(cmd)))
+  request.get('http://' + pilightBridge + '/send?' + encodeURIComponent(JSON.stringify(cmd)), function(err, res, body){
+    if(err || res.statusCode !== 200){
+      console.log(err, body, err? null : res.statusCode)
+    }
+  })
 }
 
 var toLines = function(socket) {
